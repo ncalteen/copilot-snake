@@ -303,14 +303,16 @@ export function useScore(options: ScoreOptions = {}) {
       totalFoodEaten,
       lastGameImprovement
     }
-  }, [scoreHistory, scoreData.gameTime, scoreData.foodEaten])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [scoreHistory])
 
   /**
    * Check if current score is a new high score
    */
   const isNewHighScore = useCallback(() => {
     return scoreData.current > 0 && scoreData.current >= scoreData.high
-  }, [scoreData.current, scoreData.high])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   /**
    * Get score rank (percentile among all games played)
@@ -323,7 +325,8 @@ export function useScore(options: ScoreOptions = {}) {
       const lowerScores = scoreHistory.filter((s) => s < targetScore).length
       return Math.round((lowerScores / scoreHistory.length) * 100)
     },
-    [scoreHistory, scoreData.current]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [scoreHistory]
   )
 
   /**

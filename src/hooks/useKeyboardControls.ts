@@ -105,7 +105,7 @@ export function useKeyboardControls(
       currentDirectionRef.current = direction
       callbacks.onDirectionChange(direction)
     },
-    [callbacks.onDirectionChange, debounceDelay, gameState]
+    [debounceDelay, gameState, callbacks]
   )
 
   /**
