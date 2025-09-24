@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useGameState } from '@/hooks/useGameState'
 import { useScore } from '@/hooks/useScore'
 import { useKeyboardControls } from '@/hooks/useKeyboardControls'
@@ -130,6 +130,22 @@ export default function Home() {
     }
   }, [gameState.isPaused])
 
+  // Manage body class for preventing scrolling on mobile during gameplay
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+
+    if (gameState.state === GameState.PLAYING && !gameState.isPaused) {
+      document.body.classList.add('game-active')
+    } else {
+      document.body.classList.remove('game-active')
+    }
+
+    // Cleanup on unmount
+    return () => {
+      document.body.classList.remove('game-active')
+    }
+  }, [gameState.state, gameState.isPaused])
+
   // Show start screen when game is idle
   if (gameState.state === GameState.IDLE) {
     return (
@@ -149,7 +165,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-4 sm:py-8">
         {/* Header with Score */}
         <div className="mb-8">
           <div className="flex items-center justify-between mb-6">
@@ -168,11 +184,11 @@ export default function Home() {
         </div>
 
         {/* Game Board */}
-        <div className="mb-8 relative">
-          <GameBoard gameState={gameState} className="max-w-lg mx-auto" />
+        <div className="mb-4 sm:mb-8 relative">
+          <GameBoard gameState={gameState} />
           <ParticleEffects
             particles={visualEffects.particles}
-            className="max-w-lg mx-auto"
+            className="max-w-sm mx-auto sm:max-w-lg"
           />
           <PauseOverlay
             visible={
@@ -180,7 +196,7 @@ export default function Home() {
             }
             isAutoPause={wasAutoPaused}
             onResume={actions.resumeGame}
-            className="max-w-lg mx-auto"
+            className="max-w-sm mx-auto sm:max-w-lg"
           />
         </div>
 
@@ -204,7 +220,7 @@ export default function Home() {
         </div>
 
         {/* Mobile Controls */}
-        <div className="mb-8">
+        <div className="mb-4 sm:mb-8">
           <MobileControls
             onDirectionChange={actions.changeDirection}
             disabled={
