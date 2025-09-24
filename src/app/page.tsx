@@ -4,6 +4,7 @@ import React, { useState } from 'react'
 import { useGameState } from '@/hooks/useGameState'
 import { useScore } from '@/hooks/useScore'
 import { useKeyboardControls } from '@/hooks/useKeyboardControls'
+import { useGameLoop } from '@/hooks/useGameLoop'
 import { useGameAudio } from '@/hooks/useAudio'
 import { useGameVisualEffects } from '@/hooks/useVisualEffects'
 import { useTabVisibility } from '@/hooks/useTabVisibility'
@@ -52,6 +53,13 @@ export default function Home() {
     enabled: true,
     gameState: gameState.state,
     debounceDelay: 100
+  })
+
+  // Setup game loop to move snake automatically
+  useGameLoop(actions.moveSnake, {
+    speed: gameState.speed,
+    gameState: gameState.state,
+    enabled: gameState.state === GameState.PLAYING && !gameState.isPaused
   })
 
   // Handle game over with useEffect to avoid setState during render
