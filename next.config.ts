@@ -7,6 +7,8 @@ const nextConfig: NextConfig = {
   output: 'export',
   // Set base path for GitHub Pages deployment only in production
   basePath: isProd ? '/copilot-snake' : '',
+  // Set asset prefix to match basePath for GitHub Pages
+  assetPrefix: isProd ? '/copilot-snake' : '',
   // Disable image optimization for static export
   images: {
     unoptimized: true

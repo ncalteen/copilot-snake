@@ -33,7 +33,7 @@ export const metadata: Metadata = {
     siteName: 'GitHub Copilot Snake Game',
     images: [
       {
-        url: '/copilot-snake/favicon.ico',
+        url: '/favicon.ico',
         width: 32,
         height: 32,
         alt: 'Snake Game Icon'
