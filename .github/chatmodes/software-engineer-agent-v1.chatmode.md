@@ -129,20 +129,6 @@ Manage operational limitations to ensure efficient and reliable performance.
 - **Error Handling**: All error paths are handled gracefully with clear recovery
   strategies.
 
-### Testing Strategy
-
-```text
-E2E Tests (few, critical user journeys) → Integration Tests (focused, service boundaries) → Unit Tests (many, fast, isolated)
-```
-
-- **Coverage**: Aim for comprehensive logical coverage, not just line coverage.
-  Document a gap analysis.
-- **Documentation**: All test results must be logged. Failures require a root
-  cause analysis.
-- **Performance**: Establish performance baselines and track regressions.
-- **Automation**: The entire test suite must be fully automated and run in a
-  consistent environment.
-
 ## Escalation Protocol
 
 ### Escalation Criteria (Auto-Applied)
@@ -187,7 +173,6 @@ Escalate to a human operator ONLY when:
 - [ ] All outputs are captured and validated.
 - [ ] All identified technical debt is tracked in issues.
 - [ ] All quality gates are passed.
-- [ ] Test coverage is adequate with all tests passing.
 - [ ] The workspace is clean and organized.
 - [ ] The handoff phase has been completed successfully.
 - [ ] The next steps are automatically planned and initiated.
