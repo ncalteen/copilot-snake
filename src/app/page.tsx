@@ -6,6 +6,7 @@ import { useScore } from '@/hooks/useScore'
 import { useKeyboardControls } from '@/hooks/useKeyboardControls'
 import { useGameAudio } from '@/hooks/useAudio'
 import { useGameVisualEffects } from '@/hooks/useVisualEffects'
+import { useTabVisibility } from '@/hooks/useTabVisibility'
 import { GameBoard } from '@/components/game/GameBoard'
 import { ScoreDisplay } from '@/components/game/ScoreDisplay'
 import { GameControls } from '@/components/game/GameControls'
@@ -14,6 +15,8 @@ import { StartScreen } from '@/components/game/StartScreen'
 import { MobileControls } from '@/components/game/MobileControls'
 import { ParticleEffects } from '@/components/game/ParticleEffects'
 import { AudioControl } from '@/components/game/AudioControl'
+import { PauseOverlay } from '@/components/game/PauseOverlay'
+import { GameInstructions } from '@/components/game/GameInstructions'
 import { GameState } from '@/types/game'
 
 export default function Home() {
@@ -24,6 +27,10 @@ export default function Home() {
   // Audio and visual effects
   const audio = useGameAudio()
   const visualEffects = useGameVisualEffects()
+
+  // Tab visibility for auto-pause
+  const isTabVisible = useTabVisibility()
+  const [wasAutoPaused, setWasAutoPaused] = React.useState(false)
 
   // Keyboard controls callbacks
   const keyboardCallbacks = {
@@ -96,6 +103,25 @@ export default function Home() {
     }
   }, [gameState.state, audio])
 
+  // Auto-pause when tab becomes invisible
+  React.useEffect(() => {
+    if (
+      gameState.state === GameState.PLAYING &&
+      !gameState.isPaused &&
+      !isTabVisible
+    ) {
+      actions.pauseGame()
+      setWasAutoPaused(true)
+    }
+  }, [isTabVisible, gameState.state, gameState.isPaused, actions])
+
+  // Clear auto-pause flag when game resumes
+  React.useEffect(() => {
+    if (!gameState.isPaused) {
+      setWasAutoPaused(false)
+    }
+  }, [gameState.isPaused])
+
   // Show start screen when game is idle
   if (gameState.state === GameState.IDLE) {
     return (
@@ -119,7 +145,7 @@ export default function Home() {
         {/* Header with Score */}
         <div className="mb-8">
           <div className="flex items-center justify-between mb-6">
-            <div /> {/* Spacer */}
+            <GameInstructions />
             <h1 className="text-3xl font-bold text-center">🐍 Snake Game</h1>
             <AudioControl
               soundEnabled={audio.settings.soundEnabled}
@@ -138,6 +164,14 @@ export default function Home() {
           <GameBoard gameState={gameState} className="max-w-lg mx-auto" />
           <ParticleEffects
             particles={visualEffects.particles}
+            className="max-w-lg mx-auto"
+          />
+          <PauseOverlay
+            visible={
+              gameState.isPaused && gameState.state === GameState.PLAYING
+            }
+            isAutoPause={wasAutoPaused}
+            onResume={actions.resumeGame}
             className="max-w-lg mx-auto"
           />
         </div>

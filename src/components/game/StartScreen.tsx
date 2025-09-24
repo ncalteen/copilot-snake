@@ -4,6 +4,7 @@ import { Play, Trophy, Gamepad2, Smartphone, Keyboard } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { ScoreData } from '@/types/game'
+import { GameInstructions } from './GameInstructions'
 
 interface StartScreenProps {
   /** Score data for displaying high score and statistics */
@@ -65,14 +66,17 @@ export function StartScreen({
 
       {/* Start Game Button */}
       <div className="py-4">
-        <Button
-          onClick={onStartGame}
-          size="lg"
-          className="text-lg px-8 py-4 h-auto"
-          autoFocus>
-          <Play className="w-5 h-5 mr-2" />
-          Start Game
-        </Button>
+        <div className="flex flex-col items-center gap-3">
+          <Button
+            onClick={onStartGame}
+            size="lg"
+            className="text-lg px-8 py-4 h-auto"
+            autoFocus>
+            <Play className="w-5 h-5 mr-2" />
+            Start Game
+          </Button>
+          <GameInstructions />
+        </div>
         <p className="text-xs text-muted-foreground mt-2">
           Press{' '}
           <kbd className="px-1.5 py-0.5 text-xs font-semibold bg-muted border border-border rounded">
