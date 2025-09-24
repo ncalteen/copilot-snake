@@ -10,6 +10,11 @@ export function useTabVisibility() {
   const [isVisible, setIsVisible] = useState<boolean>(true)
 
   useEffect(() => {
+    // Check if we're in browser environment
+    if (typeof document === 'undefined') {
+      return
+    }
+
     // Initial state
     setIsVisible(!document.hidden)
 
