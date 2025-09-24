@@ -122,11 +122,13 @@
 }
 
 /* Prevent scrolling on mobile during gameplay */
-@media (max-width: 1024px) {
+@media (max-width: 1023px) {
   body.game-active {
     touch-action: none;
     overflow: hidden;
     position: fixed;
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
   }
