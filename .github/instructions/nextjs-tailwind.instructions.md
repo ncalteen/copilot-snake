@@ -78,4 +78,3 @@ TypeScript.
 5. Add proper error handling
 6. Implement responsive styling
 7. Add loading states
-8. Write tests

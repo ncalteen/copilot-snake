@@ -164,14 +164,6 @@ or other components that the plan relies on.]
 - **FILE-001**: Description of file 1
 - **FILE-002**: Description of file 2
 
-## 6. Testing
-
-[List the tests that need to be implemented to verify the feature or refactoring
-task.]
-
-- **TEST-001**: Description of test 1
-- **TEST-002**: Description of test 2
-
 ## 7. Risks & Assumptions
 
 [List any risks or assumptions related to the implementation of the plan.]
