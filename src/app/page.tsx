@@ -3,7 +3,6 @@
 import React, { useState, useCallback } from 'react'
 import { useGameState } from '@/hooks/useGameState'
 import { useScore } from '@/hooks/useScore'
-import { useGameLoop } from '@/hooks/useGameLoop'
 import { useKeyboardControls } from '@/hooks/useKeyboardControls'
 import { GameBoard } from '@/components/game/GameBoard'
 import { ScoreDisplay } from '@/components/game/ScoreDisplay'
@@ -17,20 +16,6 @@ export default function Home() {
   const { gameState, actions } = useGameState()
   const { scoreData, actions: scoreActions } = useScore()
   const [showGameOverModal, setShowGameOverModal] = useState(false)
-
-  // Game loop callback for snake movement
-  const onGameTick = useCallback(() => {
-    if (gameState.state === GameState.PLAYING && !gameState.isPaused) {
-      actions.moveSnake()
-    }
-  }, [gameState.state, gameState.isPaused, actions])
-
-  // Setup game loop with current game speed - only enabled when playing
-  useGameLoop(onGameTick, {
-    speed: gameState.speed,
-    gameState: gameState.state,
-    enabled: gameState.state === GameState.PLAYING && !gameState.isPaused
-  })
 
   // Keyboard controls callbacks
   const keyboardCallbacks = {
@@ -61,9 +46,6 @@ export default function Home() {
       scoreActions.endGame()
     }
   }, [gameState.state, showGameOverModal, scoreActions])
-
-  // Note: Score tracking is handled by the score hooks separately for now
-  // TODO: Integrate proper food consumption tracking
 
   // Show start screen when game is idle
   if (gameState.state === GameState.IDLE) {
