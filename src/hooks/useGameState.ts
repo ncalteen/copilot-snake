@@ -7,11 +7,18 @@ import {
   GameActionType,
   GameState,
   Direction,
-  Position,
   DEFAULT_GAME_CONFIG,
-  INITIAL_SNAKE,
-  OPPOSITE_DIRECTIONS
+  INITIAL_SNAKE
 } from '@/types/game'
+import {
+  moveSnake,
+  growSnake,
+  changeSnakeDirection,
+  getNextHeadPosition
+} from '@/lib/snake'
+import { createFood, isFoodConsumed } from '@/lib/food'
+import { checkCollision } from '@/lib/collision'
+import { calculateSpeedFromScore } from '@/lib/difficulty'
 
 /**
  * Initial game state configuration
@@ -19,93 +26,11 @@ import {
 const initialGameState: GameStateInterface = {
   state: GameState.IDLE,
   snake: INITIAL_SNAKE,
-  food: { position: { x: 15, y: 10 }, value: 10 },
+  food: createFood(INITIAL_SNAKE, DEFAULT_GAME_CONFIG.board),
   score: 0,
   speed: DEFAULT_GAME_CONFIG.initialSpeed,
   board: DEFAULT_GAME_CONFIG.board,
   isPaused: false
-}
-
-/**
- * Generates a random food position that doesn't collide with the snake
- * @param snake Current snake state
- * @param board Game board dimensions
- * @returns New food position
- */
-function generateFoodPosition(
-  snake: GameStateInterface['snake'],
-  board: GameStateInterface['board']
-): Position {
-  const availablePositions: Position[] = []
-
-  // Generate all possible positions
-  for (let x = 0; x < board.width; x++) {
-    for (let y = 0; y < board.height; y++) {
-      const position = { x, y }
-      // Check if position is not occupied by snake
-      const isOccupied = snake.body.some(
-        (segment) => segment.x === position.x && segment.y === position.y
-      )
-      if (!isOccupied) {
-        availablePositions.push(position)
-      }
-    }
-  }
-
-  // Return random available position
-  const randomIndex = Math.floor(Math.random() * availablePositions.length)
-  return availablePositions[randomIndex] || { x: 0, y: 0 }
-}
-
-/**
- * Checks if position is within game board boundaries
- * @param position Position to check
- * @param board Game board dimensions
- * @returns True if position is valid
- */
-function isValidPosition(
-  position: Position,
-  board: GameStateInterface['board']
-): boolean {
-  return (
-    position.x >= 0 &&
-    position.x < board.width &&
-    position.y >= 0 &&
-    position.y < board.height
-  )
-}
-
-/**
- * Checks if snake head collides with its body
- * @param head Snake head position
- * @param body Snake body segments (excluding head)
- * @returns True if collision detected
- */
-function checkSelfCollision(head: Position, body: Position[]): boolean {
-  return body
-    .slice(1)
-    .some((segment) => segment.x === head.x && segment.y === head.y)
-}
-
-/**
- * Moves snake position based on current direction
- * @param position Current position
- * @param direction Movement direction
- * @returns New position
- */
-function movePosition(position: Position, direction: Direction): Position {
-  switch (direction) {
-    case Direction.UP:
-      return { x: position.x, y: position.y - 1 }
-    case Direction.DOWN:
-      return { x: position.x, y: position.y + 1 }
-    case Direction.LEFT:
-      return { x: position.x - 1, y: position.y }
-    case Direction.RIGHT:
-      return { x: position.x + 1, y: position.y }
-    default:
-      return position
-  }
 }
 
 /**
@@ -123,29 +48,13 @@ function gameStateReducer(
       return {
         ...initialGameState,
         state: GameState.PLAYING,
-        food: {
-          position: generateFoodPosition(
-            INITIAL_SNAKE,
-            DEFAULT_GAME_CONFIG.board
-          ),
-          value: 10
-        }
+        food: createFood(INITIAL_SNAKE, DEFAULT_GAME_CONFIG.board)
       }
 
     case GameActionType.CHANGE_DIRECTION:
-      // Prevent reverse direction movement
-      if (
-        OPPOSITE_DIRECTIONS[action.payload as Direction] ===
-        state.snake.direction
-      ) {
-        return state
-      }
       return {
         ...state,
-        snake: {
-          ...state.snake,
-          nextDirection: action.payload as Direction
-        }
+        snake: changeSnakeDirection(state.snake, action.payload as Direction)
       }
 
     case GameActionType.MOVE_SNAKE: {
@@ -153,69 +62,38 @@ function gameStateReducer(
         return state
       }
 
-      // Update direction from queued direction
-      const currentDirection = state.snake.nextDirection
-      const newHead = movePosition(state.snake.body[0], currentDirection)
+      // Get next head position for collision detection
+      const nextHead = getNextHeadPosition(state.snake)
 
-      // Check wall collision
-      if (!isValidPosition(newHead, state.board)) {
+      // Check for collisions
+      if (checkCollision(nextHead, state.snake.body, state.board)) {
         return {
           ...state,
           state: GameState.GAME_OVER
         }
       }
-
-      // Check self collision
-      if (checkSelfCollision(newHead, state.snake.body)) {
-        return {
-          ...state,
-          state: GameState.GAME_OVER
-        }
-      }
-
-      // Create new snake body
-      const newBody = [newHead, ...state.snake.body]
 
       // Check food consumption
-      const ateFood =
-        newHead.x === state.food.position.x &&
-        newHead.y === state.food.position.y
+      const ateFood = isFoodConsumed(nextHead, state.food)
 
       if (ateFood) {
-        // Keep tail (snake grows)
+        // Snake grows when eating food
+        const newSnake = growSnake(state.snake)
         const newScore = state.score + state.food.value
-        const newSpeed = Math.max(
-          state.speed - DEFAULT_GAME_CONFIG.speedIncrement,
-          DEFAULT_GAME_CONFIG.minSpeed
-        )
+        const newSpeed = calculateSpeedFromScore(newScore, DEFAULT_GAME_CONFIG)
 
         return {
           ...state,
-          snake: {
-            ...state.snake,
-            body: newBody,
-            direction: currentDirection
-          },
-          food: {
-            position: generateFoodPosition(
-              { ...state.snake, body: newBody },
-              state.board
-            ),
-            value: 10
-          },
+          snake: newSnake,
+          food: createFood(newSnake, state.board),
           score: newScore,
           speed: newSpeed
         }
       } else {
-        // Remove tail (normal movement)
-        newBody.pop()
+        // Normal movement without growth
         return {
           ...state,
-          snake: {
-            ...state.snake,
-            body: newBody,
-            direction: currentDirection
-          }
+          snake: moveSnake(state.snake)
         }
       }
     }
@@ -224,10 +102,7 @@ function gameStateReducer(
       return {
         ...state,
         score: state.score + state.food.value,
-        food: {
-          position: generateFoodPosition(state.snake, state.board),
-          value: 10
-        }
+        food: createFood(state.snake, state.board)
       }
 
     case GameActionType.PAUSE_GAME:
@@ -256,22 +131,13 @@ function gameStateReducer(
     case GameActionType.RESET_GAME:
       return {
         ...initialGameState,
-        food: {
-          position: generateFoodPosition(
-            INITIAL_SNAKE,
-            DEFAULT_GAME_CONFIG.board
-          ),
-          value: 10
-        }
+        food: createFood(INITIAL_SNAKE, DEFAULT_GAME_CONFIG.board)
       }
 
     case GameActionType.GENERATE_FOOD:
       return {
         ...state,
-        food: {
-          position: generateFoodPosition(state.snake, state.board),
-          value: 10
-        }
+        food: createFood(state.snake, state.board)
       }
 
     default:
