@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import React, { useState } from 'react'
 import { useGameState } from '@/hooks/useGameState'
 import { useScore } from '@/hooks/useScore'
 import { GameBoard } from '@/components/game/GameBoard'
@@ -15,6 +15,14 @@ export default function Home() {
   const { gameState, actions } = useGameState()
   const { scoreData, actions: scoreActions } = useScore()
   const [showGameOverModal, setShowGameOverModal] = useState(false)
+
+  // Handle game over with useEffect to avoid setState during render
+  React.useEffect(() => {
+    if (gameState.state === GameState.GAME_OVER && !showGameOverModal) {
+      setShowGameOverModal(true)
+      scoreActions.endGame()
+    }
+  }, [gameState.state, showGameOverModal, scoreActions])
 
   // Show start screen when game is idle
   if (gameState.state === GameState.IDLE) {
@@ -31,12 +39,6 @@ export default function Home() {
         </div>
       </div>
     )
-  }
-
-  // Handle game over
-  if (gameState.state === GameState.GAME_OVER && !showGameOverModal) {
-    setShowGameOverModal(true)
-    scoreActions.endGame()
   }
 
   return (
