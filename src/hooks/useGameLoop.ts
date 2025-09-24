@@ -140,8 +140,10 @@ export function useGameLoop(
 
       lastTickTimeRef.current = currentTime
 
-      // Schedule next frame
-      animationFrameRef.current = requestAnimationFrame(gameLoop)
+      // Only schedule next frame if still enabled and playing
+      if (enabled && gameState === GameState.PLAYING) {
+        animationFrameRef.current = requestAnimationFrame(gameLoop)
+      }
 
       setStats((prevStats) => ({ ...prevStats, isRunning: true }))
     },

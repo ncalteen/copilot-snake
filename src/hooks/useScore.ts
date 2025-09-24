@@ -1,22 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback, useRef } from 'react'
-
-/**
- * Score data structure
- */
-interface ScoreData {
-  /** Current game score */
-  current: number
-  /** Highest score achieved */
-  high: number
-  /** Number of food items consumed in current game */
-  foodEaten: number
-  /** Game duration in seconds */
-  gameTime: number
-  /** Games played counter */
-  gamesPlayed: number
-}
+import { ScoreData } from '@/types/game'
 
 /**
  * Score statistics for analysis
@@ -298,8 +283,15 @@ export function useScore(options: ScoreOptions = {}) {
     const history = scoreHistory.length > 0 ? scoreHistory : [scoreData.current]
     const averageScore =
       history.reduce((sum, score) => sum + score, 0) / history.length
-    const bestGameTime = scoreData.gameTime // This would need to be tracked separately for full implementation
-    const totalFoodEaten = scoreData.foodEaten // This would need to be tracked across games
+
+    // For now, use current game time as best time (this would be enhanced in a full implementation)
+    // In a complete implementation, we would track game time for each completed game
+    const bestGameTime = scoreData.gameTime
+
+    // For now, use current game food eaten (this would be enhanced in a full implementation)
+    // In a complete implementation, we would accumulate total food eaten across all games
+    const totalFoodEaten = scoreData.foodEaten
+
     const lastGameImprovement =
       history.length > 1
         ? history[history.length - 1] - history[history.length - 2]

@@ -136,9 +136,9 @@ export interface GameAction {
 }
 
 /**
- * Keyboard control configuration
+ * Keyboard control mapping type
  */
-export interface KeyboardControls {
+export type KeyboardControls = {
   /** Arrow keys mapping */
   ArrowUp: Direction.UP
   ArrowDown: Direction.DOWN
@@ -164,10 +164,12 @@ export interface ScoreData {
   current: number
   /** Highest score achieved */
   high: number
-  /** Number of food items consumed */
+  /** Number of food items consumed in current game */
   foodEaten: number
   /** Game duration in seconds */
   gameTime: number
+  /** Games played counter */
+  gamesPlayed: number
 }
 
 /**
