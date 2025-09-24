@@ -71,8 +71,9 @@ Always follow the below patterns.
 
 ## Checklist Before Creating a Pull Request
 
-- Build locally and fix TypeScript errors (`npm run build`).
+- Check and fix formatting (`npm run format:write`).
 - Check and fix linting errors (`npm run lint`).
+- Build locally and fix TypeScript errors (`npm run build`).
 
 If anything in this document is unclear or you want more detail (examples for
 patterns, tests, or CI instructions), tell me which section to expand or
