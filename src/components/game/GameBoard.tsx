@@ -67,6 +67,7 @@ export function GameBoard({ gameState, className }: GameBoardProps) {
         'mx-auto',
         className
       )}
+      data-testid="game-board"
       role="img"
       aria-label={`Game board with snake at position ${snake.body[0]?.x}, ${snake.body[0]?.y} and food at ${food.position.x}, ${food.position.y}`}>
       <div
