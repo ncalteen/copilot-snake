@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <defs>
+    <style>
+      .snake-body { fill: #4ade80; stroke: #16a34a; stroke-width: 1; }
+      .snake-head { fill: #22c55e; stroke: #15803d; stroke-width: 1; }
+      .snake-eye { fill: #000; }
+      .food { fill: #ef4444; stroke: #dc2626; stroke-width: 1; }
+      .bg { fill: #1f2937; }
+    </style>
+  </defs>
+  
+  <!-- Background -->
+  <rect class="bg" width="32" height="32" rx="4"/>
+  
+  <!-- Snake body segments -->
+  <rect class="snake-body" x="4" y="12" width="4" height="4" rx="1"/>
+  <rect class="snake-body" x="8" y="12" width="4" height="4" rx="1"/>
+  <rect class="snake-body" x="12" y="12" width="4" height="4" rx="1"/>
+  <rect class="snake-body" x="16" y="12" width="4" height="4" rx="1"/>
+  
+  <!-- Snake head -->
+  <rect class="snake-head" x="20" y="12" width="4" height="4" rx="1"/>
+  
+  <!-- Snake eyes -->
+  <circle class="snake-eye" cx="21.5" cy="13.5" r="0.5"/>
+  <circle class="snake-eye" cx="22.5" cy="13.5" r="0.5"/>
+  
+  <!-- Food -->
+  <circle class="food" cx="26" cy="8" r="2"/>
+</svg>

@@ -1,11 +1,11 @@
 {
   "name": "copilot-snake",
-  "description": "GitHub Copilot Snake Game Demo",
+  "description": "A classic Snake game built with Next.js and GitHub Copilot",
   "version": "0.1.0",
   "author": "Nick Alteen <ncalteen@github.com>",
   "type": "module",
   "private": true,
-  "homepage": "https://github.com/ncalteen/copilot-snake",
+  "homepage": "https://ncalteen.github.io/copilot-snake",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ncalteen/copilot-snake.git"
