@@ -55,11 +55,11 @@ export default function Home() {
     debounceDelay: 100
   })
 
-  // Setup game loop to move snake automatically  
+  // Setup game loop to move snake automatically
   useGameLoop(actions.moveSnake, {
     speed: gameState.speed,
     gameState: gameState.state,
-    enabled: true
+    enabled: gameState.state === GameState.PLAYING && !gameState.isPaused
   })
 
   // Handle game over with useEffect to avoid setState during render
