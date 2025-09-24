@@ -1,21 +1,29 @@
 'use client'
 
-import React, { useState, useCallback } from 'react'
+import React, { useState } from 'react'
 import { useGameState } from '@/hooks/useGameState'
 import { useScore } from '@/hooks/useScore'
 import { useKeyboardControls } from '@/hooks/useKeyboardControls'
+import { useGameAudio } from '@/hooks/useAudio'
+import { useGameVisualEffects } from '@/hooks/useVisualEffects'
 import { GameBoard } from '@/components/game/GameBoard'
 import { ScoreDisplay } from '@/components/game/ScoreDisplay'
 import { GameControls } from '@/components/game/GameControls'
 import { GameOverModal } from '@/components/game/GameOverModal'
 import { StartScreen } from '@/components/game/StartScreen'
 import { MobileControls } from '@/components/game/MobileControls'
+import { ParticleEffects } from '@/components/game/ParticleEffects'
+import { AudioControl } from '@/components/game/AudioControl'
 import { GameState } from '@/types/game'
 
 export default function Home() {
   const { gameState, actions } = useGameState()
   const { scoreData, actions: scoreActions } = useScore()
   const [showGameOverModal, setShowGameOverModal] = useState(false)
+
+  // Audio and visual effects
+  const audio = useGameAudio()
+  const visualEffects = useGameVisualEffects()
 
   // Keyboard controls callbacks
   const keyboardCallbacks = {
@@ -44,8 +52,49 @@ export default function Home() {
     if (gameState.state === GameState.GAME_OVER && !showGameOverModal) {
       setShowGameOverModal(true)
       scoreActions.endGame()
+
+      // Play game over sound and show visual effect
+      audio.playGameOverSound()
+      if (gameState.snake.body.length > 0) {
+        const head = gameState.snake.body[0]
+        visualEffects.showGameOver(head.x, head.y)
+      }
     }
-  }, [gameState.state, showGameOverModal, scoreActions])
+  }, [
+    gameState.state,
+    showGameOverModal,
+    scoreActions,
+    audio,
+    visualEffects,
+    gameState.snake.body
+  ])
+
+  // Handle food consumption for audio/visual feedback
+  const prevSnakeLengthRef = React.useRef(gameState.snake.body.length)
+  React.useEffect(() => {
+    if (gameState.snake.body.length > prevSnakeLengthRef.current) {
+      // Snake grew - food was eaten
+      const points = gameState.food.value
+      audio.playFoodSound()
+
+      // Show visual effect at food position
+      visualEffects.showFoodEaten(
+        gameState.food.position.x,
+        gameState.food.position.y,
+        points
+      )
+      visualEffects.showScoreIncrease(points)
+
+      prevSnakeLengthRef.current = gameState.snake.body.length
+    }
+  }, [gameState.snake.body.length, gameState.food, audio, visualEffects])
+
+  // Initialize audio on game start
+  React.useEffect(() => {
+    if (gameState.state === GameState.PLAYING && !audio.isReady) {
+      audio.initialize()
+    }
+  }, [gameState.state, audio])
 
   // Show start screen when game is idle
   if (gameState.state === GameState.IDLE) {
@@ -69,15 +118,28 @@ export default function Home() {
       <div className="container mx-auto px-4 py-8">
         {/* Header with Score */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-center mb-6">🐍 Snake Game</h1>
+          <div className="flex items-center justify-between mb-6">
+            <div /> {/* Spacer */}
+            <h1 className="text-3xl font-bold text-center">🐍 Snake Game</h1>
+            <AudioControl
+              soundEnabled={audio.settings.soundEnabled}
+              isReady={audio.isReady}
+              isSupported={audio.isSupported}
+              onToggle={audio.toggleSound}
+            />
+          </div>
           <div className="max-w-sm mx-auto">
             <ScoreDisplay scoreData={scoreData} />
           </div>
         </div>
 
         {/* Game Board */}
-        <div className="mb-8">
+        <div className="mb-8 relative">
           <GameBoard gameState={gameState} className="max-w-lg mx-auto" />
+          <ParticleEffects
+            particles={visualEffects.particles}
+            className="max-w-lg mx-auto"
+          />
         </div>
 
         {/* Game Controls */}
