@@ -1,7 +1,23 @@
 import { expect, test } from '@playwright/test'
 import { execSync } from 'child_process'
-import { existsSync, readdirSync, statSync } from 'fs'
+import { existsSync, readdirSync, readFileSync, statSync } from 'fs'
 import { join } from 'path'
+
+// Utility function to recursively walk directory and return all files
+function walkDir(dir: string): string[] {
+  let files: string[] = []
+  const items = readdirSync(dir)
+
+  for (const item of items) {
+    const fullPath = join(dir, item)
+    if (statSync(fullPath).isDirectory()) {
+      files = files.concat(walkDir(fullPath))
+    } else {
+      files.push(fullPath)
+    }
+  }
+  return files
+}
 
 test.describe('Static Export Build Verification', () => {
   test('static build completes successfully', async () => {
@@ -81,21 +97,6 @@ test.describe('Static Export Build Verification', () => {
 
     if (existsSync(nextStaticDir)) {
       // Check that static assets exist
-      const walkDir = (dir: string): string[] => {
-        let files: string[] = []
-        const items = readdirSync(dir)
-
-        for (const item of items) {
-          const fullPath = join(dir, item)
-          if (statSync(fullPath).isDirectory()) {
-            files = files.concat(walkDir(fullPath))
-          } else {
-            files.push(fullPath)
-          }
-        }
-        return files
-      }
-
       const allFiles = walkDir(nextStaticDir)
 
       // Should have JavaScript files
@@ -123,26 +124,11 @@ test.describe('Static Export Build Verification', () => {
     const nextStaticDir = join(outDir, '_next', 'static')
 
     if (existsSync(nextStaticDir)) {
-      const walkDir = (dir: string): string[] => {
-        let files: string[] = []
-        const items = readdirSync(dir)
-
-        for (const item of items) {
-          const fullPath = join(dir, item)
-          if (statSync(fullPath).isDirectory()) {
-            files = files.concat(walkDir(fullPath))
-          } else {
-            files.push(fullPath)
-          }
-        }
-        return files
-      }
-
       const jsFiles = walkDir(nextStaticDir).filter((f) => f.endsWith('.js'))
 
       for (const jsFile of jsFiles.slice(0, 5)) {
         // Check first 5 JS files
-        const jsContent = fs.readFileSync(jsFile, 'utf-8')
+        const jsContent = readFileSync(jsFile, 'utf-8')
 
         // Should not contain development-only code
         expect(jsContent).not.toContain('webpack-hot-middleware')
