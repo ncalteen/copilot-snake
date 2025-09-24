@@ -1,10 +1,12 @@
 import type { NextConfig } from 'next'
 
+const isProd = process.env.NODE_ENV === 'production'
+
 const nextConfig: NextConfig = {
   // Enable static export for GitHub Pages
   output: 'export',
-  // Set base path for GitHub Pages deployment
-  basePath: '/copilot-snake',
+  // Set base path for GitHub Pages deployment only in production
+  basePath: isProd ? '/copilot-snake' : '',
   // Disable image optimization for static export
   images: {
     unoptimized: true
