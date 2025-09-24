@@ -63,8 +63,10 @@ export function GameBoard({ gameState, className }: GameBoardProps) {
     <div
       className={cn(
         'relative bg-secondary border border-border rounded-lg p-2 shadow-sm',
-        'aspect-square max-w-full max-h-[min(80vh,80vw)]',
-        'mx-auto',
+        'aspect-square w-full max-w-sm mx-auto',
+        // Ensure it fits on mobile screens with room for controls
+        'max-h-[min(60vh,calc(100vw-2rem))]',
+        'sm:max-w-lg sm:max-h-[min(70vh,70vw)]',
         className
       )}
       role="img"

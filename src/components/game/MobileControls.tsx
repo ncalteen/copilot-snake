@@ -45,6 +45,9 @@ export function MobileControls({
     (e: TouchEvent) => {
       if (disabled || e.touches.length !== 1) return
 
+      // Prevent default browser scrolling behavior
+      e.preventDefault()
+
       const touch = e.touches[0]
       touchStartRef.current = { x: touch.clientX, y: touch.clientY }
     },
@@ -56,6 +59,9 @@ export function MobileControls({
     (e: TouchEvent) => {
       if (disabled || !touchStartRef.current || e.changedTouches.length !== 1)
         return
+
+      // Prevent default browser scrolling behavior
+      e.preventDefault()
 
       const touch = e.changedTouches[0]
       const deltaX = touch.clientX - touchStartRef.current.x
@@ -93,8 +99,10 @@ export function MobileControls({
   useEffect(() => {
     if (typeof window === 'undefined') return
 
-    document.addEventListener('touchstart', handleTouchStart, { passive: true })
-    document.addEventListener('touchend', handleTouchEnd, { passive: true })
+    document.addEventListener('touchstart', handleTouchStart, {
+      passive: false
+    })
+    document.addEventListener('touchend', handleTouchEnd, { passive: false })
 
     return () => {
       document.removeEventListener('touchstart', handleTouchStart)
