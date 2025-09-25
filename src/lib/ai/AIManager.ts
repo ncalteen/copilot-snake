@@ -31,13 +31,16 @@ export class AIManager implements IAIManager {
   private performanceMonitor: IAIPerformanceMonitor
   private isPaused: boolean = false
   private npcCounter: number = 0
+  private boardConfig: { width: number; height: number }
 
   constructor(
     aiEngine?: IAIEngine,
-    performanceMonitor?: IAIPerformanceMonitor
+    performanceMonitor?: IAIPerformanceMonitor,
+    boardConfig?: { width: number; height: number }
   ) {
     this.aiEngine = aiEngine || new AIEngine()
     this.performanceMonitor = performanceMonitor || getPerformanceMonitor()
+    this.boardConfig = boardConfig || { width: 20, height: 20 }
   }
 
   /**
@@ -378,10 +381,14 @@ export class AIManager implements IAIManager {
    * Generate starting position for NPC
    */
   private generateStartPosition(): Position {
-    // Simple random position - should be enhanced to avoid collisions
+    // Use configured board dimensions with safety padding
+    const padding = 3
+    const maxX = Math.max(padding + 1, this.boardConfig.width - padding)
+    const maxY = Math.max(padding + 1, this.boardConfig.height - padding)
+
     return {
-      x: Math.floor(Math.random() * 15) + 3, // Avoid edges
-      y: Math.floor(Math.random() * 15) + 3
+      x: Math.floor(Math.random() * (maxX - padding)) + padding,
+      y: Math.floor(Math.random() * (maxY - padding)) + padding
     }
   }
 
@@ -414,10 +421,11 @@ let aiManagerInstance: AIManager | null = null
  */
 export function getAIManager(
   aiEngine?: IAIEngine,
-  performanceMonitor?: IAIPerformanceMonitor
+  performanceMonitor?: IAIPerformanceMonitor,
+  boardConfig?: { width: number; height: number }
 ): AIManager {
   if (!aiManagerInstance) {
-    aiManagerInstance = new AIManager(aiEngine, performanceMonitor)
+    aiManagerInstance = new AIManager(aiEngine, performanceMonitor, boardConfig)
   }
   return aiManagerInstance
 }

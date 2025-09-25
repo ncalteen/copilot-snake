@@ -105,7 +105,7 @@ export class AIPerformanceMonitor implements IAIPerformanceMonitor {
     // Update metrics
     metrics.decisionTime = processingTime
     metrics.decisionsCount++
-    metrics.timeAlive = now - (metrics.lastUpdate - metrics.timeAlive)
+    metrics.timeAlive += now - metrics.lastUpdate
     metrics.lastUpdate = now
 
     // Calculate average decision time

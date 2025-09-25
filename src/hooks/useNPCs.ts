@@ -19,6 +19,7 @@ import {
 import { Position } from '@/types/game'
 import { getAIManager } from '@/lib/ai/AIManager'
 import { getPerformanceMonitor } from '@/lib/ai/AIPerformance'
+import { DEFAULT_GAME_CONFIG } from '@/types/game'
 
 /**
  * NPC hook configuration options
@@ -101,7 +102,8 @@ export function useNPCs(options: NPCHookOptions = {}): NPCHookResult {
       }
       aiManagerRef.current = getAIManager(
         undefined,
-        performanceMonitorRef.current
+        performanceMonitorRef.current,
+        DEFAULT_GAME_CONFIG.board
       )
     }
   }, [enablePerformanceMonitoring])
@@ -111,16 +113,37 @@ export function useNPCs(options: NPCHookOptions = {}): NPCHookResult {
     if (!aiManagerRef.current) return
 
     const activeNPCs = aiManagerRef.current.getActiveNPCs()
-    const allNPCsList = Array.from(
-      new Map([...allNPCs, ...activeNPCs].map((npc) => [npc.id, npc])).values()
-    )
 
-    setNPCs(activeNPCs)
-    setAllNPCs(allNPCsList)
+    // Only update if there are actual changes
+    setNPCs((prevNPCs) => {
+      if (
+        prevNPCs.length !== activeNPCs.length ||
+        !prevNPCs.every((npc, i) => npc.id === activeNPCs[i]?.id)
+      ) {
+        return activeNPCs
+      }
+      return prevNPCs
+    })
+
+    // Update all NPCs list efficiently
+    setAllNPCs((prevAllNPCs) => {
+      const allNPCsMap = new Map(prevAllNPCs.map((npc) => [npc.id, npc]))
+      let hasChanges = false
+
+      // Add or update active NPCs
+      for (const npc of activeNPCs) {
+        if (!allNPCsMap.has(npc.id) || allNPCsMap.get(npc.id) !== npc) {
+          allNPCsMap.set(npc.id, npc)
+          hasChanges = true
+        }
+      }
+
+      return hasChanges ? Array.from(allNPCsMap.values()) : prevAllNPCs
+    })
 
     const stats = aiManagerRef.current.getStatistics()
     setIsPaused(stats.isPaused)
-  }, [allNPCs])
+  }, [])
 
   // Create NPC
   const createNPC = useCallback(
