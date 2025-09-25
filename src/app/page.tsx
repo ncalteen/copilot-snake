@@ -92,6 +92,9 @@ export default function Home() {
       const points = gameState.food.value
       audio.playFoodSound()
 
+      // Update score tracking
+      scoreActions.eatFood(points)
+
       // Show visual effect at food position
       visualEffects.showFoodEaten(
         gameState.food.position.x,
@@ -102,7 +105,13 @@ export default function Home() {
 
       prevSnakeLengthRef.current = gameState.snake.body.length
     }
-  }, [gameState.snake.body.length, gameState.food, audio, visualEffects])
+  }, [
+    gameState.snake.body.length,
+    gameState.food,
+    audio,
+    visualEffects,
+    scoreActions
+  ])
 
   // Initialize audio on game start
   React.useEffect(() => {
