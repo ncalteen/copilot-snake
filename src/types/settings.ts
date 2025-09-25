@@ -14,15 +14,18 @@ export const SETTINGS_VERSION = '1.0.0'
 
 /**
  * Theme settings interface
+ * Note: Some fields are intentionally duplicated in AccessibilitySettings
+ * for organizational purposes - the theme settings control visual theming
+ * while accessibility settings control assistive features
  */
 export interface ThemeSettings {
   /** Current theme mode */
   mode: ThemeMode
   /** Custom theme name if using custom theme */
   customTheme?: string
-  /** Reduce motion for accessibility */
+  /** Reduce motion for accessibility (also in AccessibilitySettings) */
   reduceMotion: boolean
-  /** High contrast mode */
+  /** High contrast mode (also in AccessibilitySettings) */
   highContrast: boolean
 }
 
@@ -47,6 +50,9 @@ export interface AudioSettings {
 
 /**
  * Game settings interface
+ * Note: debugMode and showPerformanceMetrics are also in DeveloperSettings
+ * for organizational purposes - game settings control game-specific features
+ * while developer settings control debugging/development features
  */
 export interface GameSettings {
   /** Difficulty level */
@@ -60,9 +66,9 @@ export interface GameSettings {
   }
   /** Auto-pause when window loses focus */
   autoPause: boolean
-  /** Show performance metrics (FPS, etc.) */
+  /** Show performance metrics (FPS, etc.) - also in DeveloperSettings */
   showPerformanceMetrics: boolean
-  /** Enable collision detection debug mode */
+  /** Enable collision detection debug mode - also in DeveloperSettings */
   debugMode: boolean
 }
 
@@ -86,11 +92,14 @@ export interface UISettings {
 
 /**
  * Accessibility settings interface
+ * Note: highContrast and reduceMotion are also in ThemeSettings
+ * for organizational purposes - theme settings handle visual theming
+ * while accessibility settings handle assistive technology features
  */
 export interface AccessibilitySettings {
-  /** High contrast mode */
+  /** High contrast mode - also in ThemeSettings for visual theming */
   highContrast: boolean
-  /** Reduce motion for vestibular disorders */
+  /** Reduce motion for vestibular disorders - also in ThemeSettings */
   reduceMotion: boolean
   /** Focus ring visibility */
   enhancedFocus: boolean
@@ -102,11 +111,14 @@ export interface AccessibilitySettings {
 
 /**
  * Developer settings interface
+ * Note: debugMode and showPerformanceMetrics are also in GameSettings
+ * for organizational purposes - game settings handle game-specific features
+ * while developer settings handle development/debugging tools
  */
 export interface DeveloperSettings {
-  /** Enable debug mode */
+  /** Enable debug mode - also in GameSettings for game-specific debugging */
   debugMode: boolean
-  /** Show performance metrics */
+  /** Show performance metrics - also in GameSettings for game performance */
   showPerformanceMetrics: boolean
   /** Enable console logging */
   enableLogging: boolean

@@ -382,7 +382,7 @@ export function useSettings(): UseSettingsReturn {
         description: 'User settings export'
       })
       return JSON.stringify(exportData, null, 2)
-    } catch {
+    } catch (error) {
       throw new Error(`Failed to export settings: ${error}`)
     }
   }, [settings])
@@ -504,7 +504,7 @@ export function useSettings(): UseSettingsReturn {
             originalSettingsRef.current = validationResult.settings
             setIsDirty(false)
           }
-        } catch {
+        } catch (error) {
           console.warn('Failed to sync settings from other tab:', error)
         }
       }
