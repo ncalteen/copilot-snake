@@ -21,6 +21,7 @@ export interface ThemeColors {
   accent: string
   'accent-foreground': string
   destructive: string
+  'destructive-foreground': string
   border: string
   input: string
   ring: string
@@ -66,6 +67,7 @@ export const lightTheme: ThemeConfig = {
     accent: 'oklch(0.97 0 0)',
     'accent-foreground': 'oklch(0.205 0 0)',
     destructive: 'oklch(0.577 0.245 27.325)',
+    'destructive-foreground': 'oklch(0.985 0 0)',
     border: 'oklch(0.922 0 0)',
     input: 'oklch(0.922 0 0)',
     ring: 'oklch(0.708 0 0)'
@@ -103,6 +105,7 @@ export const darkTheme: ThemeConfig = {
     accent: 'oklch(0.269 0 0)',
     'accent-foreground': 'oklch(0.985 0 0)',
     destructive: 'oklch(0.704 0.191 22.216)',
+    'destructive-foreground': 'oklch(0.145 0 0)',
     border: 'oklch(1 0 0 / 10%)',
     input: 'oklch(1 0 0 / 15%)',
     ring: 'oklch(0.556 0 0)'
