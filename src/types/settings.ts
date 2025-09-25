@@ -107,6 +107,10 @@ export interface AccessibilitySettings {
   screenReaderAnnouncements: boolean
   /** Keyboard navigation only */
   keyboardOnly: boolean
+  /** Zoom level for visually impaired users (0.5-3.0) */
+  zoomLevel: number
+  /** Enable pan controls for zoomed interface */
+  enablePanning: boolean
 }
 
 /**
@@ -222,7 +226,9 @@ export const AccessibilitySettingsSchema = z.object({
   reduceMotion: z.boolean(),
   enhancedFocus: z.boolean(),
   screenReaderAnnouncements: z.boolean(),
-  keyboardOnly: z.boolean()
+  keyboardOnly: z.boolean(),
+  zoomLevel: z.number().min(0.5).max(3.0),
+  enablePanning: z.boolean()
 })
 
 /**
@@ -307,7 +313,9 @@ export const DEFAULT_ACCESSIBILITY_SETTINGS: AccessibilitySettings = {
   reduceMotion: false,
   enhancedFocus: false,
   screenReaderAnnouncements: true,
-  keyboardOnly: false
+  keyboardOnly: false,
+  zoomLevel: 1.0,
+  enablePanning: false
 }
 
 /**
