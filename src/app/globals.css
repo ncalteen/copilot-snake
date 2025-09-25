@@ -76,6 +76,16 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+
+  /* Game-specific theme colors */
+  --snake-body: oklch(0.488 0.243 264.376);
+  --snake-head: oklch(0.4 0.25 264.376);
+  --food-normal: oklch(0.646 0.222 41.116);
+  --food-bonus: oklch(0.577 0.245 27.325);
+  --game-border: oklch(0.708 0 0);
+  --game-background: oklch(0.99 0 0);
+  --score-text: oklch(0.205 0 0);
+  --ui-accent: oklch(0.488 0.243 264.376);
 }
 
 .dark {
@@ -110,6 +120,16 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
+
+  /* Game-specific theme colors for dark mode */
+  --snake-body: oklch(0.488 0.243 264.376);
+  --snake-head: oklch(0.4 0.25 264.376);
+  --food-normal: oklch(0.696 0.17 162.48);
+  --food-bonus: oklch(0.704 0.191 22.216);
+  --game-border: oklch(0.556 0 0);
+  --game-background: oklch(0.18 0 0);
+  --score-text: oklch(0.985 0 0);
+  --ui-accent: oklch(0.488 0.243 264.376);
 }
 
 @layer base {
@@ -118,6 +138,22 @@
   }
   body {
     @apply bg-background text-foreground;
+    transition:
+      background-color 0.3s ease,
+      color 0.3s ease;
+  }
+
+  /* Theme transition animations */
+  html {
+    transition: background-color 0.3s ease;
+  }
+
+  /* Smooth transitions for themed elements */
+  [data-theme-transition] {
+    transition:
+      background-color 0.3s ease,
+      border-color 0.3s ease,
+      color 0.3s ease;
   }
 }
 
