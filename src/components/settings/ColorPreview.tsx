@@ -129,7 +129,9 @@ export function ColorPreview({
         return (
           <div
             className="flex h-full w-full items-center justify-center rounded-md"
-            style={{ backgroundColor: backgroundColor }}>
+            style={{ backgroundColor: backgroundColor }}
+            role="img"
+            aria-label="Game preview showing snake and food">
             <div className="relative">
               {/* Snake preview */}
               <div
@@ -224,6 +226,13 @@ export function ColorPreview({
                       ? 'bg-yellow-500'
                       : 'bg-red-500'
                 )}
+                aria-label={
+                  accessibilityReport.score >= 80
+                    ? 'Good accessibility score'
+                    : accessibilityReport.score >= 60
+                      ? 'Fair accessibility score'
+                      : 'Poor accessibility score'
+                }
               />
               <span className="text-xs text-muted-foreground">
                 {accessibilityReport.score}/100

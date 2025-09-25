@@ -182,16 +182,22 @@ export function ColorPicker({
               <div className="space-y-4">
                 {/* Color input */}
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">Color Value</label>
+                  <label htmlFor="color-input" className="text-sm font-medium">
+                    Color Value
+                  </label>
                   <input
+                    id="color-input"
                     type="text"
                     value={inputValue}
                     onChange={handleInputChange}
                     className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
                     placeholder="#000000 or rgb(0,0,0)"
+                    aria-describedby="color-input-error"
                   />
                   {!isValidColor && inputValue && (
-                    <p className="text-xs text-destructive">
+                    <p
+                      id="color-input-error"
+                      className="text-xs text-destructive">
                       Please enter a valid color format
                     </p>
                   )}
@@ -212,6 +218,7 @@ export function ColorPicker({
                         onChange={(e) =>
                           handleHSLChange({ h: parseInt(e.target.value) })
                         }
+                        aria-label="Adjust hue value"
                         className="w-full"
                         style={{
                           background: `linear-gradient(to right, 
@@ -239,6 +246,7 @@ export function ColorPicker({
                         onChange={(e) =>
                           handleHSLChange({ s: parseInt(e.target.value) })
                         }
+                        aria-label="Adjust saturation value"
                         className="w-full"
                         style={{
                           background: `linear-gradient(to right, 
@@ -261,6 +269,7 @@ export function ColorPicker({
                         onChange={(e) =>
                           handleHSLChange({ l: parseInt(e.target.value) })
                         }
+                        aria-label="Adjust lightness value"
                         className="w-full"
                         style={{
                           background: `linear-gradient(to right, 
@@ -307,13 +316,18 @@ function PresetGrid({ onSelect }: { onSelect: (preset: ColorPreset) => void }) {
 
   React.useEffect(() => {
     // Import presets dynamically to avoid circular dependencies
-    import('@/lib/colorPresets').then(({ ALL_PRESETS, getPresetsByTag }) => {
-      if (selectedCategory === 'all') {
-        setPresets(ALL_PRESETS.slice(0, 12)) // Limit for UI space
-      } else {
-        setPresets(getPresetsByTag(selectedCategory))
-      }
-    })
+    import('@/lib/colorPresets')
+      .then(({ ALL_PRESETS, getPresetsByTag }) => {
+        if (selectedCategory === 'all') {
+          setPresets(ALL_PRESETS.slice(0, 12)) // Limit for UI space
+        } else {
+          setPresets(getPresetsByTag(selectedCategory))
+        }
+      })
+      .catch((error) => {
+        console.error('Failed to load color presets:', error)
+        setPresets([]) // Fallback to empty array
+      })
   }, [selectedCategory])
 
   const categories = [
