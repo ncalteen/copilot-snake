@@ -163,7 +163,9 @@ function migrateLegacyTo100(data: unknown): unknown {
     reduceMotion: false,
     enhancedFocus: false,
     screenReaderAnnouncements: true,
-    keyboardOnly: false
+    keyboardOnly: false,
+    zoomLevel: 1.0,
+    enablePanning: false
   }
 
   migrated.developer = {
