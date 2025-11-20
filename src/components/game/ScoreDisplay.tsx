@@ -107,16 +107,14 @@ export function ScoreDisplay({
       </div>
 
       {/* Score per food ratio */}
-      {foodEaten > 0 && (
-        <div className="text-center pt-2 border-t border-border">
-          <div className="text-xs text-muted-foreground font-medium mb-1">
-            Points per Food
-          </div>
-          <div className="text-sm font-medium text-foreground">
-            {Math.round(current / foodEaten)} pts/food
-          </div>
+      <div className="text-center pt-2 border-t border-border">
+        <div className="text-xs text-muted-foreground font-medium mb-1">
+          Points per Food
         </div>
-      )}
+        <div className="text-sm font-medium text-foreground">
+          {foodEaten > 0 ? Math.round(current / foodEaten) : 0} pts/food
+        </div>
+      </div>
 
       {/* Accessibility information */}
       <div className="sr-only">

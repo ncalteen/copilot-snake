@@ -221,4 +221,15 @@ test.describe('Snake Game Functionality', () => {
       }
     }
   })
+
+  test('points per food is always visible', async ({ page }) => {
+    // Start the game
+    await page.click('button:has-text("Start Game")')
+
+    // Verify "Points per Food" label is visible immediately
+    await expect(page.locator('text=Points per Food')).toBeVisible()
+
+    // Verify the value is displayed (should be "0 pts/food" when no food eaten)
+    await expect(page.locator('text=0 pts/food')).toBeVisible()
+  })
 })
