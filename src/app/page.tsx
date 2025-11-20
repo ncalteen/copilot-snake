@@ -1,24 +1,24 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
-import { useGameState } from '@/hooks/useGameState'
-import { useScore } from '@/hooks/useScore'
-import { useKeyboardControls } from '@/hooks/useKeyboardControls'
-import { useGameLoop } from '@/hooks/useGameLoop'
-import { useGameAudio } from '@/hooks/useAudio'
-import { useGameVisualEffects } from '@/hooks/useVisualEffects'
-import { useTabVisibility } from '@/hooks/useTabVisibility'
+import { AudioControl } from '@/components/game/AudioControl'
 import { GameBoard } from '@/components/game/GameBoard'
-import { ScoreDisplay } from '@/components/game/ScoreDisplay'
 import { GameControls } from '@/components/game/GameControls'
+import { GameInstructions } from '@/components/game/GameInstructions'
 import { GameOverModal } from '@/components/game/GameOverModal'
-import { StartScreen } from '@/components/game/StartScreen'
 import { MobileControls } from '@/components/game/MobileControls'
 import { ParticleEffects } from '@/components/game/ParticleEffects'
-import { AudioControl } from '@/components/game/AudioControl'
 import { PauseOverlay } from '@/components/game/PauseOverlay'
-import { GameInstructions } from '@/components/game/GameInstructions'
+import { ScoreDisplay } from '@/components/game/ScoreDisplay'
+import { StartScreen } from '@/components/game/StartScreen'
+import { useGameAudio } from '@/hooks/useAudio'
+import { useGameLoop } from '@/hooks/useGameLoop'
+import { useGameState } from '@/hooks/useGameState'
+import { useKeyboardControls } from '@/hooks/useKeyboardControls'
+import { useScore } from '@/hooks/useScore'
+import { useTabVisibility } from '@/hooks/useTabVisibility'
+import { useGameVisualEffects } from '@/hooks/useVisualEffects'
 import { GameState } from '@/types/game'
+import React, { useEffect, useState } from 'react'
 
 export default function Home() {
   const { gameState, actions } = useGameState()
@@ -86,6 +86,14 @@ export default function Home() {
 
   // Handle food consumption for audio/visual feedback
   const prevSnakeLengthRef = React.useRef(gameState.snake.body.length)
+
+  // Reset snake length ref when game starts/restarts
+  React.useEffect(() => {
+    if (gameState.state === GameState.PLAYING) {
+      prevSnakeLengthRef.current = gameState.snake.body.length
+    }
+  }, [gameState.state, gameState.snake.body.length])
+
   React.useEffect(() => {
     if (gameState.snake.body.length > prevSnakeLengthRef.current) {
       // Snake grew - food was eaten
